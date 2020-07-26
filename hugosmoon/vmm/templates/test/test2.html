@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html >
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>拖拽控件</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+    <script src="{% static 'import/vue.js' %}"></script>
+    <script src="{% static 'import/element_index.js' %}"></script>
+    <script src="{% static 'import/three.js' %}"></script>
+    <script src="{% static 'import/stats.js' %}"></script>
+    <script src="{% static 'import/Setting.js' %}"></script>
+    <script src="{% static 'import/OrbitControls.js' %}"></script>
+    <script src="{% static 'import/dat.gui.min.js' %}"></script>
+    <script src="{% static 'import/SceneUtils.js' %}"></script>
+    <script src="{% static 'import/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'import/jquery.cookie.js' %}"></script>
+    <script src="{% static 'import/STLLoader.js' %}"></script>
+    <!-- <script src="{% static 'import/dat.gui.js' %}"></script> -->
+    <script src="{% static 'import/echarts.min.js' %}"></script>
+    <script src="{% static 'import/echarts-gl.min.js' %}"></script>
+    <script src="{% static 'import/vue-resource.min.js' %}"></script>
+    
+    <!-- <script src="{% static 'import/three-r93.js' %}"></script> -->
+    <script src="{% static 'import/TrackballControls.js' %}"></script>
+    <!--拖拽控件-->
+    <script src="{% static 'import/DragControls.js' %}"></script>
+    <!--可视化平移控件-->
+    <script src="{% static 'import/TransformControls.js' %}"></script>
+
+</head>
+<body>
+    <button onclick="initContent()">chushihuamoxing</button>
+    <button onclick="initDragControls()">123444</button>
+<script>
+
+    var scene, camera, renderer, controls, light;
+
+    // 场景
+    function initScene() {
+        scene = new THREE.Scene();
+    }
+
+    // 相机
+    function initCamera() {
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+        camera.position.set(0, 4000, 6000);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+    }
+
+    // 渲染器
+    function initRenderer() {
+        renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+    }
+
+    // 初始化模型
+    function initContent() {
+        var helper = new THREE.GridHelper(12000, 50, 0xCD3700, 0x4A4A4A);
+        scene.add(helper);
+
+        var cubeGeometry = new THREE.BoxGeometry(100, 100, 100);
+        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x9370DB});
+        var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        // scene.add(cube);
+
+        var cubeGeometry = new THREE.BoxGeometry(100, 100, 100);
+        var cubeMaterial = new THREE.MeshLambertMaterial({color: 0x9370DB});
+        var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        // scene.add(cube);
+        let color=new THREE.Color(1,1,1);
+        // let emissive_color=new THREE.Color(1,1,1);
+        let materials;
+        materials = [
+            new THREE.MeshPhysicalMaterial({
+                color:color,
+                // 材质像金属的程度. 非金属材料，如木材或石材，使用0.0，金属使用1.0，中间没有（通常）.
+                // 默认 0.5. 0.0到1.0之间的值可用于生锈的金属外观
+                metalness: 1,
+                // 材料的粗糙程度. 0.0表示平滑的镜面反射，1.0表示完全漫反射. 默认 0.5
+                roughness: 1,
+                // 设置环境贴图
+                // envMap: textureCube,
+                // 反射程度, 从 0.0 到1.0.默认0.5.
+                // 这模拟了非金属材料的反射率。 当metalness为1.0时无效
+                // reflectivity: models_info[index].reflectivity,
+                // emissive:emissive_color,
+                // emissiveIntensity:models_info[index].emissiveIntensity,
+                }),
+        ];
+
+        let loader = new THREE.STLLoader();
+        loader.load("/static/models/F_6140_weizuo/1581327580816961.STL", function (geometry) {
+            geometry.center();
+            let mm = THREE.SceneUtils.createMultiMaterialObject(geometry, materials);
+            scene.add(mm);
+            console.log('12222')
+        });  
+    }
+
+    // 窗口变动触发的方法
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    // 初始化轨迹球控件
+    function initControls() {
+        // controls = new THREE.TrackballControls(camera, renderer.domElement);
+    }
+
+    // 添加拖拽控件
+    function initDragControls() {
+
+        // 初始化轨迹球控件
+        controls = new THREE.TrackballControls(camera, renderer.domElement);
+        // 添加平移控件
+        var transformControls = new THREE.TransformControls(camera, renderer.domElement);
+        scene.add(transformControls);
+
+        // 过滤不是 Mesh 的物体,例如辅助网格
+        var objects = [];
+        // for (let i = 0; i < scene.children.length; i++) {
+        //     if (scene.children[i].isObject3D) {
+        //         objects.push(scene.children[i].children[0]);
+        //     }
+        // }
+        objects.push(scene.children[3].children[0]);
+        console.log(objects)
+        // 初始化拖拽控件
+        var dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
+
+        // 鼠标略过
+        dragControls.addEventListener('hoveron', function (event) {
+            transformControls.attach(event.object);
+            // console.log(event.object)
+        });
+        // 开始拖拽
+        dragControls.addEventListener('dragstart', function (event) {
+            controls.enabled = false;
+        });
+        // 拖拽结束
+        dragControls.addEventListener('dragend', function (event) {
+            controls.enabled = true;
+            // console.log(objects)
+        });
+    }
+
+    // 初始化灯光
+    function initLight() {
+        light = new THREE.SpotLight(0xffffff);
+        light.position.set(-300, 600, -400);
+        scene.add(light);
+        scene.add(new THREE.AmbientLight(0x5C5C5C));
+    }
+
+    // 初始化
+    function init() {
+        initScene();
+        initCamera();
+        initRenderer();
+        // initContent();
+        initLight();
+        // initControls();
+        // initDragControls();
+        // window.addEventListener('resize', onWindowResize, false);
+    }
+
+    function animate() {
+
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+        try{
+            controls.update();
+        }
+        catch(e){
+
+        }
+        
+    }
+
+    init();
+    animate();
+
+</script>
+</body>
+</html>

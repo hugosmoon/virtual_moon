@@ -1,0 +1,305 @@
+body {
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    height: 1000px;
+    /*全屏显示的设置*/
+    margin: 0;
+    overflow: hidden;/*消除浏览器的滚动条*/
+}
+#render{
+    position:absolute;
+    margin-top: 0px;
+}
+.control{
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(0,0,0,0.7);
+    position:absolute;
+    margin-top: 30px;
+    margin-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor:pointer;
+}
+    .experiment{
+        padding-top: 30px;
+        padding-bottom: 30px;
+        padding-left: 30px;
+        padding-right: 30px;
+        width: 250px;
+    }
+
+.left-top-2{
+    opacity: 0.8;
+    border-radius:5px;
+    /* background:rgba(0,0,0,0.7); */
+    position:absolute;
+    margin-top: 30px;
+    margin-left: 265px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+.left-top-3{
+    opacity: 0.8;
+    border-radius:5px;
+    /* background:rgba(0,0,0,0.7); */
+    position:absolute;
+    margin-top: 30px;
+    margin-left: 380px;
+    padding-top: 26px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 12px;
+    color: aqua;
+}
+#control-inner{
+    /* margin-top: 5px;
+    margin-left: 5px;
+    margin-right: 50px; */
+}
+#title1{
+    font-size: 20px;
+    color: floralwhite;
+}
+.title1{
+    font-size: 20px;
+    color: floralwhite;
+}
+#title2{
+    font-size: 14px;
+    color: floralwhite;
+    font-weight: bold;
+    margin-top: 15px;margin-bottom: 8px;
+}
+#button1{
+    margin-top: 10px;
+}
+#select1{
+    margin-top: 10px;
+}
+.con-ang{
+    margin-bottom: 50px;
+}
+
+#pla_control{
+
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(0,0,0,0.7);
+    float:right;
+    margin-top: 30px;
+    margin-right: 30px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+    width: 250px;
+
+
+}
+
+#force_control{
+
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(0,0,0,0.7);
+    float:right;
+    margin-top: 30px;
+    margin-right: 30px;
+    padding-bottom: 30px;
+    width: 500px;
+
+
+}
+
+.right-charts{
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(0,0,0,0.7);
+    float:right;
+    margin-top: 30px;
+    margin-right: 30px;
+    padding-bottom: 30px;
+    width: 400px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+.image__placeholder{
+    /* width: 100%;
+    margin-right: 2px; */
+}
+#container{
+    margin-bottom: 30px;
+}
+
+#full_page{
+    opacity: 0.8;
+    /* border-radius:5px; */
+    background:rgba(0,0,0,0.2);
+    position:absolute;
+    
+
+    width: 100%;
+    height: 100%;
+}
+#lef_top_label{
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(0,0,0,0.7);
+    position:absolute;
+    margin-top: 30px;
+    margin-left: 30px;
+    /* padding-top: 10px; */
+    padding-bottom: 5px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.index{
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(255, 255, 255, 0.08);
+    position:absolute;
+    margin-top: 30px;
+    margin-left: 30px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    cursor:pointer;
+}
+
+#mask{
+    width: 100%;
+    opacity: 0.92;
+    background-color: black;
+    bottom: 0;
+    left: 0;
+    position: fixed;
+    z-index: 998;
+  }
+
+  .right-top{
+    opacity: 0.8;
+    border-radius:5px;
+    background:rgba(0,0,0,0.7);
+    float:right;
+    margin-top: 30px;
+    margin-right: 30px;
+    /* padding-top: 10px; */
+    padding-bottom: 20px;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .pad{
+      /* opacity: 0.9; */
+    border-radius:5px;
+    background:rgba(178, 191, 248, 0.5);
+    padding-bottom: 20px;
+    padding-top: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+
+  }
+  .pad.login{
+    position:absolute;
+    top: 400px;
+    left: 41%;
+    width: 18%;
+  }
+  .pad.left{
+    position:absolute;
+    top: 150px;
+    left: 50px;
+    width: 300px;
+  }
+  .new-index{
+    position:absolute;
+    top: 80px;
+
+   
+    
+  }
+
+  
+  .page-backgroud{
+    opacity: 0.35;
+  }
+  .page-title{
+    position:absolute;
+    top: 0px;
+    left: 50px;
+    width: 500px;
+    font-size: 30px;
+    font-weight: bold;
+    color: aliceblue;
+  }
+  .page-name{
+    position:absolute;
+    top: 47px;
+    right: 50px;
+    font-size: 16px;
+    color: aliceblue;
+  }
+  .page-left{
+    border-radius:5px;
+    background:rgba(178, 191, 248, 0.5);
+    
+    position:absolute;
+    top: 400px;
+    left: 41%;
+    width: 18%;
+
+    padding-bottom: 20px;
+    padding-top: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  /* .new-index-pad{
+    position:absolute;
+    padding-bottom: 20px;
+    padding-top: 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+    width: 30%;
+    
+  } */
+
+  .new-index-pad{
+    cursor: pointer;
+    border-radius:5px;
+    background:rgba(1, 12, 25, 0.6);
+    opacity: 0.9;
+    width: 30vw;
+    height: 20vw;
+    float: left;
+    margin-bottom: 1vw;
+    margin-left: 1vw;
+    padding-right: 1vw;
+    padding-left: 1vw;
+    padding-bottom: 1vw;
+    padding-top: 1vw;
+
+  }
+  .new-index-pad:hover
+  { 
+  background:rgb(67, 164, 230);
+  opacity: 0.9;
+  }
+
+  .experiment-title{
+    font-size:18px;
+    color: rgb(230, 225, 225);
+  }

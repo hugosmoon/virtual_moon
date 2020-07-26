@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- <link rel="icon" href="{% static 'logo.ico' %}"> -->
+    <title>{{display_name}}</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'import/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'main_css/main.css' %}">
+    <!-- 引入组件库 -->
+    <script src="{% static 'import/vue.js' %}"></script>
+    <script src="{% static 'import/element_index.js' %}"></script>
+    <script src="{% static 'import/three.js' %}"></script>
+    <script src="{% static 'import/stats.js' %}"></script>
+    <script src="{% static 'import/Setting.js' %}"></script>
+    <script src="{% static 'import/OrbitControls.js' %}"></script>
+    <script src="{% static 'import/dat.gui.min.js' %}"></script>
+    <script src="{% static 'import/SceneUtils.js' %}"></script>
+    <script src="{% static 'import/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'import/jquery.cookie.js' %}"></script>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <script src="{% static 'main_js/create_visit_log.js' %}"></script>
+    <script src="{% static 'main_js/error/view_exception.js' %}"></script>
+    <script src="{% static 'import/STLLoader.js' %}"></script>
+    <script src="{% static 'import/stats.js' %}"></script>
+    <script src="{% static 'import/echarts.min.js' %}"></script>
+    <script src="{% static 'import/echarts-gl.min.js' %}"></script>
+    <script src="{% static 'import/vue-resource.min.js' %}"></script>
+    <!-- 轨迹球控件 -->
+    <script src="{% static 'import/TrackballControls.js' %}"></script>
+    <!-- <script src="{% static 'main_js/login_verification.js' %}"></script> -->
+    
+</head>
+<body>
+    <div id="Stats-output"></div>
+    <div>
+        <!--加载动画的div-->
+        <div id="render">
+        </div>
+        <div id="app">
+            <div style="display:none;" class="right-top" id="buttons"> 
+            </div>
+        </div>
+            
+        </div>
+    </div>
+    <script>
+        let code="{{code}}";
+    </script>
+    <script src="{% static 'main_js/model.js' %}"></script>
+    <script src="{% static 'main_js/view_display.js' %}"></script>
+    <script src="{% static 'main_js/update_models.js' %}"></script>
+    <script src="{% static 'main_js/program/view_run.js' %}"></script>
+
+    <script>
+        let display_view_id={{view_id}};
+        let renderer, camera, scene,controls,controller;
+        ////模型信息列表
+        let models_info=[];
+        ////模型实体列表
+        let models=[];
+        let load_models_num;
+        let loaded_models_num=0;
+        let load_status=false;
+        let Main = {
+            data() {
+                return {
+                    display_name:'',
+
+                }
+            },
+            mounted:function(){
+                $("title").html(GAME_TITLE);
+                initThree(0);
+                loadAutoScreen(camera, renderer);
+                this.openFullScreen(200);
+                load_models(display_view_id)
+                render();
+            },
+            methods: {
+                update:function(){
+                    // console.log(123)
+                    update_models();
+                    update_models_info();
+                },
+                // get_display_info:function(){
+                //     this.$http.post(
+                //     '/vmm/get_display_view/',
+                //     {
+                //         display_view_id:display_view_id
+                //     },
+                //     { emulateJSON: true }
+                //     ).then(function (res) {
+                //         console.log(tres)
+                //         this.display_name=res.body.views[0].display_name;
+                //         console.log(this.display_name)
+                //         // $('#title2').html(this.display_name)
+                //         $("title").html(this.display_name);
+                //     });
+                // },
+
+                // 加载遮罩
+                openFullScreen:function(time) {
+                    const loading = this.$loading({
+                        lock: true,
+                        text: '模型加载中',
+                        background: 'rgba(0, 0, 0, 0.92)'
+                    });
+                    setTimeout(() => {
+                        if(load_status){
+                            loading.close();
+                        }
+                        else {
+                            this.openFullScreen(200);
+                        }
+
+                    }, time);
+                },
+
+            }
+        }
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app')
+        //动画
+        function render() {
+            if(load_status){
+                run.update_time_step();
+                eval(run.code.l);
+            }
+           
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+            // controls.update();
+        }
+   
+    </script>
+    <script>
+        create_visit_log(9);
+    </script>
+    
+    
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" href="{% static 'logo.ico' %}">
+    <title>切削用量和切削力的关系</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'import/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'main_css/main.css' %}">
+    <!-- 引入组件库 -->
+    <script src="{% static 'import/vue.js' %}"></script>
+    <script src="{% static 'import/element_index.js' %}"></script>
+    <script src="{% static 'import/three.js' %}"></script>
+    <script src="{% static 'import/stats.js' %}"></script>
+    <script src="{% static 'import/Setting.js' %}"></script>
+    <script src="{% static 'import/OrbitControls.js' %}"></script>
+    <script src="{% static 'import/dat.gui.min.js' %}"></script>
+    <script src="{% static 'import/SceneUtils.js' %}"></script>
+    <script src="{% static 'import/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'import/jquery.cookie.js' %}"></script>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <script src="{% static 'main_js/create_visit_log.js' %}"></script>
+    <script src="{% static 'main_js/error/view_exception.js' %}"></script>
+    <script src="{% static 'import/STLLoader.js' %}"></script>
+    <script src="{% static 'import/dat.gui.js' %}"></script>
+    <script src="{% static 'import/stats.js' %}"></script>
+    <script src="{% static 'import/echarts.min.js' %}"></script>
+    <script src="{% static 'import/echarts-gl.min.js' %}"></script>
+    <script src="{% static 'import/vue-resource.min.js' %}"></script>
+    <!-- 轨迹球控件 -->
+    <script src="{% static 'import/TrackballControls.js' %}"></script>
+    <script src="{% static 'main_js/login_verification.js' %}"></script>
+    
+    
+</head>
+<body style="background-color: black;">
+    <div id="Stats-output"></div>
+    <el-row :gutter="20" v-loading='loading'>
+        <!-- ... -->
+    </el-row>
+
+    <div>
+        <!--加载动画的div-->
+        <div id="render">
+        </div>
+
+
+        <!--<button id="control-8">刀尖向前</button>-->
+
+        <div id="app">
+            <div id="mask" ref="mask">
+                <div ref="progress" style="width:20%; text-align:center;">
+                <p v-if="progress_status" style="color: blanchedalmond;">模型加载中</p>
+                <el-progress v-if="progress_status" :text-inside="true" :stroke-width="26" :percentage="progress_data"></el-progress>
+                </div>
+            </div>
+            <div class="control experiment">
+                <div id="control-inner">
+                    <!-- <p id="title1">车床参数</p> -->
+                    <template>
+                        <div class="block con-ang">
+                            <span class="demonstration" style="color:#C0C4CC">主轴转速(r/min)</span>
+                            <el-slider id="machine_speed" ref="machine_speed" v-model="value1" :marks="marks_machine_speed" :min=0 :max=1400 :step="10" :disabled="adjustable"></el-slider>
+                        </div>
+                        <div class="block con-ang">
+                            <span class="demonstration" style="color:#C0C4CC">背吃刀量(mm)</span>
+                            <el-slider ref="cutting_depth" v-model="value2" :marks="marks_cutting_depth" :min=0 :max=6 :step="0.1" @input="greet" @change="greet" :disabled="adjustable"></el-slider>
+                        </div>
+                        <div class="block con-ang">
+                            <span class="demonstration" style="color:#C0C4CC">进给量(mm/r)</span>
+                            <el-slider ref="feed" v-model="value3" :marks="marks_feed" :min=0.1 :max=0.5 :step="0.01" @input="greet" @change="greet" :disabled="adjustable"></el-slider>
+                        </div>
+
+                    </template>
+
+                    <el-row>
+                        
+                    </el-row>
+                    <br>
+                    <el-row>
+                        <el-button :disabled="start_status" type="primary" @click="start">启动机床</el-button>
+
+                        <el-button :disabled="end_status" type="danger" @click="end">关闭机床</el-button>
+                    </el-row>
+                    <!-- <br>
+                    <el-row>
+                        <el-button type="danger" @click="getforce">计算切削力</el-button>
+                    </el-row> -->
+
+                </div>
+            </div>
+            <div class="right-charts">
+                    <div class="demo-image__placeholder">
+
+                        <div id="container" style="height:200px;width: 100%;"></div>
+                        <div id="container2" style="height:300px;width: 100%;margin-top: -120px;"></div>
+                        <div style="height:300px;width: 100%;color:white;" v-html="exp_information"></div>
+                        <br>
+
+                        <div style="width: 100%;text-align:center">
+                            <el-button type="warning" plain @click="reload" size="mini">复位实验</el-button>
+                            <el-button  type="primary" @click="download_data" size="mini">下载数据</el-button>
+                    
+                        </div>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+       let  main_angle={{main_angle}}
+       let  tool_minor_cutting_edge_angle={{tool_minor_cutting_edge_angle}}
+       let  edge_inclination_angle={{edge_inclination_angle}}
+       let  rake_angle={{rake_angle}}
+       let  back_angle={{back_angle}}
+       let  secondary_edge_back_angl={{secondary_edge_back_angl}}
+       let  bangliao_r={{bangliao_r}}
+       let  bangliao_length={{bangliao_length}}
+       let  daojujiaodubuchang={{daojujiaodubuchang}}
+       let  bangliao_material='{{bangliao_material}}'
+    </script>
+    
+    <script src="{% static 'main_js/model.js' %}"></script>
+    <script src="{% static 'main_js/view_display.js' %}"></script>  
+    <script src="{% static 'main_js/chart_line.js' %}"></script>
+    <script src="{% static 'main_js/create_cylinder.js' %}"></script>
+    <script src="{% static 'main_js/tool.js' %}"></script>
+    <script src="{% static 'main_js/qxyl-2.js' %}"></script>
+    <script>
+        create_visit_log(8);
+    </script>
+</body>
+</html>

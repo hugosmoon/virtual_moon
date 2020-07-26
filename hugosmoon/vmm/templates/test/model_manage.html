@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- <link rel="icon" href="{% static 'logo.ico' %}"> -->
+    <title>模型管理</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'import/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'main_css/main.css' %}">
+    <!-- 引入组件库 -->
+    <script src="{% static 'import/vue.js' %}"></script>
+    <script src="{% static 'import/element_index.js' %}"></script>
+   
+    <!-- <script src="{% static 'import/SceneUtils.js' %}"></script> -->
+    <script src="{% static 'import/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'import/jquery.cookie.js' %}"></script>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <script src="{% static 'main_js/create_visit_log.js' %}"></script>
+    <script src="{% static 'main_js/error/view_exception.js' %}"></script>
+    <script src="{% static 'import/vue-resource.min.js' %}"></script>
+    <script src="{% static 'main_js/login_verification.js' %}"></script>
+    
+</head>
+<body>
+    <div>
+        <!--加载动画的div-->
+        <div id="app">
+            <div style="padding-left: 30px;" >
+                <div id="control-inner">
+                    <div style="width: 195px;">
+                        <h3>新建文件夹</h3>
+                        <el-input v-model="folder_name" placeholder="请输入内容"></el-input>
+                        <br><br>
+                        <el-button type="primary" v-on:click="create_folder">新建文件夹</el-button>
+                        <br><br>
+                    </div>
+                    
+                    <div style="width: 400px;">
+                    <h3>上传模型</h3>
+                    <template>
+                        <el-select v-model="folder_selected" placeholder="选择文件夹" @change="models_show">
+                          <el-option
+                            v-for="item in folders"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value">
+                          </el-option>
+                        </el-select>
+                    </template>
+                    <br><br>
+                    <div id="models_show">
+
+                    </div>
+                    <br><br>
+                    <el-upload
+                    class="upload-demo"
+                    action='/vmm/upload_model/'
+                    :data='upload_data'
+                    :before-upload="beforeUpload"
+                    :on-progress="loading"
+                    :on-success="successUpload"
+                    :show-file-list=false>
+                    <el-button :disabled="fobiden_upload_status" size="small" type="primary">上传模型</el-button>
+                    <div slot="tip" class="el-upload__tip">只能上传STL文件，且大小不超过50M</div>
+                    </el-upload>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+            
+        </div>
+    </div>
+    <script>
+        let owner_id=$.cookie("userid")
+        let Main = {
+            data() {
+                return {
+                    folder_name:'',
+                    folders:[],
+                    folder_selected:'',
+                    fileList: [],//[{name: 'food.jpeg', url: ''}, {name: 'food2.jpeg', url: ''}], 
+                    upload_data:{
+                        folder_id:0
+                    }, 
+                    fobiden_upload_status:false,                 
+                }                    
+                },
+                mounted:function(){
+                this.get_folders();
+                // this.models_show();
+
+            },
+            methods: {
+                create_folder(){
+                    if(this.folder_name==''){
+                        alert('文件夹名称不能为空');
+                        return false;
+                    }
+                    this.$http.post(
+                    '/vmm/create_folder/',
+                    {
+                        folder_name:this.folder_name
+                    },
+                    { 
+                        emulateJSON: true 
+                    }
+                    ).then(function (res) {
+                        console.log(res);
+                        if(res.body=="Save failed"){
+                            alert(res.body);
+                            return false;
+                        }
+                        alert(res.body);
+                        this. folders=[];
+                        this.get_folders();
+                    });
+                },
+                get_folders(){
+                    this.$http.post(
+                    '/vmm/get_folders/',
+                    {
+                        owner_id:owner_id
+                    },
+                    { 
+                        emulateJSON: true 
+                    }
+                    ).then(function (res) {
+                        res.body.folders.forEach(folder => {
+                            this.folders.push({value: folder.id,label: folder.folder_name});
+                        })
+                    });
+                },
+                beforeUpload(file){
+                    console.log(file.name);
+                    this.upload_data.folder_id=this.folder_selected;
+                    if(this.upload_data.folder_id==0){
+                        this.$message.warning('请选择文件夹');
+                        return false;
+                    }
+                    let type=file.name.split(".")[1]
+                    if(type!='STL'&&type!='stl'){
+                        this.$message.warning('只能上传STL格式的模型')
+                        // alert('只能上传STL格式的模型')
+                        return false;
+                    }
+                },
+                loading(){
+                    this.fobiden_upload_status=true;
+                },
+                successUpload(file){
+                    this.$message(file);
+                    this.models_show();
+                    this.fobiden_upload_status=false;
+                },
+                models_show(){
+                    this.$http.post(
+                    '/vmm/get_model_by_folderid/',
+                    {
+                        folder_id:this.folder_selected
+                    },
+                    { 
+                        emulateJSON: true 
+                    }
+                    ).then(function (res) {
+                        let models_string='';
+                        for(i=0;i<res.body.models.length;i++){
+                            models_string+=res.body.models[i].model_name;
+                            models_string+='<br>';
+                        }
+                        $("#models_show").html(models_string);
+                    });
+
+                    
+                }
+            }
+        }
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app')
+    </script>
+    <script>
+        create_visit_log(3);
+      </script>
+</body>
+</html>

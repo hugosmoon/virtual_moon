@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" href="{% static 'logo.ico' %}">
+    <title>车刀角度</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'import/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'main_css/main.css' %}"></link>
+    <!-- 引入组件库 -->
+    <script src="{% static 'import/vue.js' %}"></script>
+    <script src="{% static 'import/element_index.js' %}"></script>
+    <script src="{% static 'import/three.js' %}"></script>
+    <script src="{% static 'import/stats.js' %}"></script>
+    <script src="{% static 'import/Setting.js' %}"></script>
+    <script src="{% static 'import/OrbitControls.js' %}"></script>
+    <script src="{% static 'import/dat.gui.min.js' %}"></script>
+    <script src="{% static 'import/SceneUtils.js' %}"></script>
+    <script src="{% static 'import/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'import/jquery.cookie.js' %}"></script>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <script src="{% static 'main_js/create_visit_log.js' %}"></script>
+    <script src="{% static 'main_js/error/view_exception.js' %}"></script>
+    <script src="{% static 'import/ConvexGeometry.js' %}"></script>
+    <!-- 轨迹球控件 -->
+    <script src="{% static 'import/TrackballControls.js' %}"></script>
+    <script src="{% static 'main_js/login_verification.js' %}"></script>
+</head>
+<body onload="threeStart()">
+
+<div>
+<!--加载动画的div-->
+<div id="render" >
+</div>
+
+
+        <!--<button id="control-8">刀尖向前</button>-->
+
+        <div id="app">
+            <div class="control experiment">
+                <div id="control-inner">
+                    <p id="title1">车刀基本标注角度</p>
+            <template>
+                <div class="block con-ang">
+                    <span class="demonstration" style="color:#C0C4CC">主偏角</span>
+                    <el-slider ref="main_angle" v-model="value1" :marks="marks_main_angle" :min=30 :max=90 @input="greet" @change="greet"></el-slider>
+                </div>
+                <div class="block con-ang">
+                    <span class="demonstration" style="color:#C0C4CC">副偏角</span>
+                    <el-slider ref="tool_minor_cutting_edge_angle" v-model="value2" :marks="marks_tool_minor_cutting_edge_angle" :min=0 :max=20 @input="greet" @change="greet"></el-slider>
+                </div>
+                <div class="block con-ang">
+                    <span class="demonstration" style="color:#C0C4CC">刃倾角</span>
+                    <el-slider ref="edge_inclination_angle" v-model="value3" :marks="marks_edge_inclination_angle" :min=-10 :max=5 @input="greet" @change="greet"></el-slider>
+                </div>
+                <div class="block con-ang">
+                    <span class="demonstration" style="color:#C0C4CC">前角</span>
+                    <el-slider ref="rake_angle" v-model="value4" :marks="marks_rake_angle" :min=-5 :max=25 @input="greet" @change="greet"></el-slider>
+                </div>
+                <div class="block con-ang">
+                    <span class="demonstration" style="color:#C0C4CC">后角</span>
+                    <el-slider ref="back_angle" v-model="value5" :marks="marks_back_angle" :min=6 :max=12 @input="greet" @change="greet"></el-slider>
+                </div>
+                <div class="block con-ang">
+                    <span class="demonstration" style="color:#C0C4CC">副刃后角</span>
+                    <el-slider ref="secondary_edge_back_angl" v-model="value6" :marks="marks_secondary_edge_back_angle" :min=6 :max=12 @input="greet" @change="greet"></el-slider>
+                </div>
+                <!--<div class="block con-ang">-->
+                    <!--<span class="demonstration" style="color:#C0C4CC">刀尖圆弧半径</span>-->
+                    <!--<el-slider v-model="value7" :marks="marks_tip_radius" :step="0.01" :min=0.25 :max=2></el-slider>-->
+                <!--</div>-->
+            </template>
+            <!--<el-button id="alert1" type="primary" v-on:click="greet">主要按钮</el-button>-->
+
+
+        </div>
+        </div>
+            <div id="pla_control">
+                <div id="control-inner">
+                    <el-checkbox ref="check_pr" v-model="check_pr" @change="pla_view_pr">显示基面</el-checkbox>
+                    <!-- <el-button style="margin-left: 40px;" type="primary" icon="el-icon-bottom" circle size="mini"></el-button> -->
+                </div>
+                <br>
+                <div id="control-inner">
+                    <el-checkbox ref="check_ps" v-model="check_ps" @change="pla_view_ps">显示切削平面</el-checkbox>
+                </div>
+                <br>
+                <div id="control-inner">
+                    <el-checkbox ref="check_p0" v-model="check_p0" @change="pla_view_p0">显示正交平面</el-checkbox>
+                </div>
+            </div>
+        </div>
+</div>
+</div>
+<script src="{% static 'main_js/tool_angle.js' %}"></script>
+<script>
+    create_visit_log(5);
+  </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    {% load static %}
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <!-- <link rel="icon" href="{% static 'logo.ico' %}"> -->
+    <title>场景编程</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="{% static 'import/css/index.css' %}">
+    <link rel="stylesheet" href="{% static 'main_css/main.css' %}">
+    <!-- 引入组件库 -->
+    <script src="{% static 'import/vue.js' %}"></script>
+    <script src="{% static 'import/element_index.js' %}"></script>
+    <script src="{% static 'import/jquery-3.4.1.min.js' %}"></script>
+    <script src="{% static 'import/jquery.cookie.js' %}"></script>
+    <script src="http://pv.sohu.com/cityjson?ie=utf-8"></script>
+    <script src="{% static 'main_js/create_visit_log.js' %}"></script>
+    <script src="{% static 'main_js/error/view_exception.js' %}"></script>
+    <script src="{% static 'import/vue-resource.min.js' %}"></script>
+    <script src="{% static 'main_js/login_verification.js' %}"></script>
+    <style>
+        .el-aside {
+          background-color: #D3DCE6;
+          color: #333;
+        }
+        
+        .el-main {
+          background-color: #E9EEF3;
+          color: #333;
+          font-size: 12px;
+          margin-bottom: 20px;
+        }
+        
+        body > .el-container {
+          margin-bottom: 40px;
+        }
+        
+      </style>
+    
+</head>
+<body>
+    <div>
+        <!--加载动画的div-->
+        <div id="app">
+            <el-container>
+                <el-container>
+                  <el-aside width="300px">
+                    <div id="model_info_list" style="margin: 20px;"></div>
+                  </el-aside>
+                  <el-main>
+                      <div style="height: 500%;font-family:Helvetica, sans-serif;">
+                      <h2><a style="color: cornflowerblue;" v-on:click="syntax_description=!syntax_description">基本语法>>></a></h2>
+                      <div v-if="syntax_description">
+                      <p><b>基本的代码结构</b></p>
+                      <p>###各部分代码块可为空，但是结构必须保证###</p>
+                      <p>START_VAR</p>
+                      <p>###定义变量的代码块###</p>
+                      <p>END_VAR</p>
+                      <p>START_EVENT</p>
+                      <p>###定义事件的代码块###</p>
+                      <p>END_EVENT</p>
+                      <p>START_LOOP</p>
+                      <p>###定义loop逻辑代码块###</p>
+                      <p>END_LOOP</p>
+                      <p><b>基本语法</b></p>
+                      <p>1、变量必须以V_开头，无需声明指令，类似python，如：V_length=10;</p>
+                      <p>2、对缩进没有要求</p>
+                      <p>3、每一条指令必须以 ; 结尾</p>
+                      <p>4、字符串类型只能用单引号,如 'str'</p>
+                      <p>5、注释: ###这个内容将被注释###</p>
+                      <p>6、支持if语句，形如：if(M[1].position.x>10){M[1].move(0,3)}</p>
+                      <p>7、选择模型：M[serial];其中serial为左侧列表中的模型序号</p>
+                      <p>8、调用方法：M[1].move(0,3)</p>   
+                      <p>9、调用属性：M[1].position.x </p>
+                      <p>10、最多可添加20个按钮，每个按钮可以设置点击事件 </p>
+                      <p>11、定义按钮:B[number].init(name) ;其中number为1~20的整数，name是字符串类型，将作为按钮的文案</p>
+                      <p>12、按钮事件的添加方式，语法比较特殊：B[4].click("  if(V_v>0){V_v-=10;}   ");
+                      <p>13、LOOP对应的是三维场景里的每一帧，浏览器会根据资源情况自动调整帧率，全局变量TIME_STEP对应当前帧的事件间隔，在LOOP代码块中可以使用该变量</p>
+                      
+                      <p><b>模型移动</b></p>
+                      <p>1、连续移动：move(axis,v); 其中axis是坐标轴，可为'x','y','z';v是移动速度，必须为数字，正数为正向移动，负数为反向移动，默认单位 mm/s；只能在LOOP代码块中使用</p>
+                      <p>2、指定位置：set_position(axis,po); 其中axis是坐标轴，可为'x','y','z';po是坐标位置，必须为数字，默认单位 mm</p>
+                      <p>3、属性：positon.axis; 其中axis是坐标轴，可为x,y,z;读取属性可返回模型当前对应坐标轴的坐标值，默认单位mm</p>
+                      <p><b>模型转动</b></p>
+                      <p>1、连续转动：rotate(axis,av);其中axis是坐标轴，可为'x','y','z';av是转动速度，必须为数字，正数为逆时针旋转，负数为顺时针旋转，默认单位 °/s；只能在LOOP代码块中使用</p>
+                      <p>2、指定角度：set_rotation(axis,a);其中axis是坐标轴，可为'x','y','z';a是角度，必须为数字，正数为逆时针旋转，负数为顺时针旋转，默认单位 °</p>
+                      <p>3、属性：rotation.axis; 其中axis是坐标轴，可为x,y,z;读取属性可返回模型当前对应坐标轴的角度值，默认单位 °</p>
+                      <p><b>模型缩放</b></p>
+                      <p>1、连续缩放：zoom(axis,sv);其中axis是坐标轴，可为'x','y','z'; sv为缩放速度，必须为数字，正数为放大，负数为缩小，默认单位 1/s；只能在LOOP代码块中使用</p>
+                      <p>2、指定缩放比例：set_scale(axis,n);其中axis是坐标轴，可为'x','y','z'; n为缩放比例，必须为正数，默认单位 1</p>
+                      <p>3、属性：scale.axis; 其中axis是坐标轴，可为x,y,z;读取属性可返回模型当前对应坐标轴的缩放比例，默认单位 1</p>
+                      <p><b>模型可见</b></p>
+                      <p>1、指定可见与否：set_visible(bool);其中bool为布尔类型的变量</p>
+                      <p>2、属性：visible; 布尔类型，true或false</p>
+                      </div>
+                      <el-input
+                        type="textarea"
+                        :rows="30"
+                        :autosize="{ minRows: 20, maxRows: 60}"
+                        placeholder="开始你的表演"
+                        v-model="code">
+                      </el-input>
+                      <br><br>
+                      <el-button type="success" v-on:click="save_code">保存代码</el-button>
+                      <el-button type="primary" v-on:click="to_run_page">执行代码</el-button>
+                    </div>
+                  </el-main>
+                </el-container>
+              </el-container>
+        </div>
+    </div>
+    <script>
+        let owner_id=$.cookie("userid");
+        let view_id={{view_id}};
+        let Main = {
+            data() {
+                return {
+                    code:'{{code}}', 
+                    code_serial:"",
+                    view_id:view_id,
+                    model_info_list:[],
+                    syntax_description:false,
+
+
+
+                    }                    
+                },
+            mounted:function(){
+                this.get_models()
+                this.code=this.code.split('**@**')[1];
+                this.code=this.code.replace(/~~~/g, "\n");
+                let arrEntities={'#x27':"'",'lt':'<','gt':'>','nbsp':' ','amp':'&','quot':'"'}; 
+                this.code = this.code.replace(/&(#x27|lt|gt|nbsp|amp|quot);/ig,function(all,t){return arrEntities[t];});
+            },
+            methods: {
+                get_models:function(){
+                    this.$http.post(
+                        '/vmm/get_models_by_view/',
+                        {
+                            view_id:this.view_id
+                        },
+                        { emulateJSON: true }
+                        ).then(function (res) {
+                            this.model_info_list=res.body.models;
+                            console.log(this.model_info_list)
+                            let html="<table><tr><td style='width:50px'><b>序号</b></td><td><b>名称</b></td></tr>";
+                            this.model_info_list.forEach(model => {
+                                html+="<tr><td>"+model.serial+"</td><td>"+model.model_name+"</td></tr>"
+                                this.code_serial+=model.serial+"-";
+                            });   
+                            html+="</table>" 
+                            $('#model_info_list').html(html)   
+                        });
+                },
+                save_code:function(){
+
+                    this.$http.post(
+                        '/vmm/save_code/',
+                        {
+                            view_id:this.view_id,
+                            code:this.code_serial+"**@**"+this.code
+                        },
+                        { emulateJSON: true }
+                        ).then(function (res) {
+                            // console.log(res)
+                            if(res.body=="success"){
+                                this.$message({
+                                message: '代码保存成功',
+                                type: 'success'
+                                });
+                            }
+                            else{
+                                this.$message({
+                                message: '代码保存异常',
+                                type: 'error'
+                                });
+                            }
+                        });
+                },
+                to_run_page:function(){
+                    this.$http.post(
+                        '/vmm/save_code/',
+                        {
+                            view_id:this.view_id,
+                            code:this.code_serial+"**@**"+this.code
+                        },
+                        { emulateJSON: true }
+                        ).then(function (res) {
+                            // console.log(res)
+                            if(res.body=="success"){
+                                window.open('/vmm/view_run/'+this.view_id+'/');
+                            }
+                            else{
+                                this.$message({
+                                message: '代码保存异常',
+                                type: 'error'
+                                });
+                            }
+                            
+                        });
+                    
+                },
+
+            }
+        }
+        var Ctor = Vue.extend(Main)
+        new Ctor().$mount('#app')
+    </script>
+    <script>
+        create_visit_log(8);
+      </script>
+</body>
+</html>
