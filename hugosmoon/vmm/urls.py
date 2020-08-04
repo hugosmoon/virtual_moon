@@ -46,8 +46,13 @@ urlpatterns = [
     # 保存代码
     path('save_code/',views.save_code,name='save_code'),
 
-     # 执行代码的页面
+    # 执行代码的页面
     re_path('^view_run/(?P<view_id>[0-9]+)/',views.view_run,name='view_run'),
+
+    #ajax
+    #用七牛公有链接获取私有链接
+    path('get_private_model/', views.get_private_model,name='get_private_model'),
+
     
 ]
 

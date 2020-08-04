@@ -10,9 +10,15 @@ import os
 import time
 from django.db.models import Q
 
-from . import qiniuupdownload
+# from . import qiniuupdownload
+from . import qiniu_file_manage
+from qiniu import Auth, put_file, etag
+import qiniu.config
+import requests
 
 
+
+#
  
 def home(request):
     return render(request, 'index.html')
@@ -515,15 +521,52 @@ def upload_model(request):
         if file_type != 'STL' and file_type != 'stl':
             return HttpResponse(file.name+'上传失败,因为文件格式不是STL')
         
-        file_name_url=str(round(time.time()*1000000))+'.STL'
+        # file_name_url=str(round(time.time()*1000000))+'.STL'
         
-        file_path = os.path.join(os.path.dirname(globals()["__file__"]),'static','models',folder_name,file_name_url)
+        # file_path = os.path.join(os.path.dirname(globals()["__file__"]),'static','models',folder_name,file_name_url)
+        # f = open(file_path, 'wb')
+        # for chunk in file.chunks():
+        #     f.write(chunk)
+        # f.close()
+        # # return HttpResponse('OK')
+        # com_model.objects.create(model_name=file.name,folder_id=folder_id,url='/static/models/'+folder_name+'/'+file_name_url)
+
+
+
+        # file_name_url='test'+'.STL'
+        
+        file_path = os.path.join(os.path.dirname(globals()["__file__"]),'static','models','test.STL')
         f = open(file_path, 'wb')
         for chunk in file.chunks():
             f.write(chunk)
         f.close()
-        # return HttpResponse('OK')
-        com_model.objects.create(model_name=file.name,folder_id=folder_id,url='/static/models/'+folder_name+'/'+file_name_url)
+
+        access_key = 'VfUZy5Gm-aQkbLkpm_lcTraFLW9ac9h1wj-SHbbr'
+        secret_key = 'hBwXWe0BBbkkntfGRUtSEmsA1M9uZqrESiWyIzzk'
+
+        #构建鉴权对象
+        q = Auth(access_key, secret_key)
+
+        #要上传的空间
+        bucket_name = 'hugosmodel'
+
+        #上传后保存的文件名
+        key = str(round(time.time()*1000000)) + '.STL'
+        # key = 'qqqq' + '.STL'
+
+        #生成上传 Token，可以指定过期时间等
+        token = q.upload_token(bucket_name, key, 3600)
+
+        #要上传文件的本地路径
+        localfile = os.getcwd()+'/vmm/static/models/test.STL'
+
+        ret, info = put_file(token, key, localfile)
+        print(info.text_body)
+        assert ret['key'] == key
+        assert ret['hash'] == etag(localfile)
+        com_model.objects.create(model_name=file.name,folder_id=folder_id,url='http://hugosmodel.diandijiaoyu.com.cn/'+key)
+
+
         return HttpResponse(file.name+'上传成功')
 
 #查询对应文件夹的模型
@@ -620,6 +663,19 @@ def view_run(request,view_id):
     if len(program)>0:
         code=program[0].code.replace("\n", "~~~")
     return render(request, 'test/view_run.html',{"view_id": view_id,"code":code})
+
+
+# 获取私有链接
+@csrf_exempt
+def get_private_model(request):
+    if request.method == 'POST':
+        base_url=request.POST.get('url')
+        access_key = 'VfUZy5Gm-aQkbLkpm_lcTraFLW9ac9h1wj-SHbbr'
+        secret_key = 'hBwXWe0BBbkkntfGRUtSEmsA1M9uZqrESiWyIzzk'
+        #构建鉴权对象
+        q = Auth(access_key, secret_key)
+        private_url = q.private_download_url(base_url, expires=360)
+        return HttpResponse(private_url)
 
 
 

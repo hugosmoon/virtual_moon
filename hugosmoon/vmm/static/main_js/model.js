@@ -356,3 +356,29 @@ function Model(view_id,model_id,model_name,url,index,materials_type){
     };
 
 }
+
+function getPrivateModel(url){
+    // this.$http.post(
+    //     '/vmm/get_private_model/',
+    //     {
+    //         url: url,
+    //     },
+    //     { emulateJSON: true }
+    //     ).then(function (res) {
+    //         console.log(res)
+    //     });
+
+        $.ajax({
+            type: 'POST',
+            url: "/vmm/get_private_model/" ,
+        
+            data: {
+            'url':url
+            } ,
+            success: function(data){
+                return data
+                // console.log(data)
+            } ,
+        
+        });
+}
