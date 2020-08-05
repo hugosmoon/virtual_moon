@@ -51,7 +51,7 @@ urlpatterns = [
 
     #ajax
     #用七牛公有链接获取私有链接
-    path('get_private_model/', views.get_private_model,name='get_private_model'),
+    # path('get_private_model/', views.get_private_model,name='get_private_model'),
 
     
 ]

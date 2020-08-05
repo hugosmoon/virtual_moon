@@ -419,6 +419,10 @@ def get_models_by_view(request):
         models=Load_models_conf.objects.filter(view_id__in=child_view_id_list,isdelete=False).values()
         data={}
         data['models'] = list(models)
+        for i in range(len(data['models'])):
+            data['models'][i]['model_url']=get_private_model(data['models'][i]['model_url'])
+            # print(i)
+        # print(len(data['models']))
         return JsonResponse(data)
 
 #根据模型场景名称和index删除模型
@@ -509,7 +513,7 @@ def get_folders(request):
         # print(data)
         return JsonResponse(data)
 
-#上传模型
+#上传模型-本地
 @csrf_exempt
 def upload_model(request):
     if request.method == 'POST':
@@ -551,7 +555,7 @@ def upload_model(request):
         bucket_name = 'hugosmodel'
 
         #上传后保存的文件名
-        key = str(round(time.time()*1000000)) + '.STL'
+        key = file.name.split('.')[0]+"("+str(round(time.time()*1000000)) + str(random.randint(0,10000)) + ').STL'
         # key = 'qqqq' + '.STL'
 
         #生成上传 Token，可以指定过期时间等
@@ -564,10 +568,10 @@ def upload_model(request):
         print(info.text_body)
         assert ret['key'] == key
         assert ret['hash'] == etag(localfile)
-        com_model.objects.create(model_name=file.name,folder_id=folder_id,url='http://hugosmodel.diandijiaoyu.com.cn/'+key)
+        com_model.objects.create(model_name=key,folder_id=folder_id,url='http://hugosmodel.diandijiaoyu.com.cn/'+key)
 
 
-        return HttpResponse(file.name+'上传成功')
+        return HttpResponse(key+'上传成功')
 
 #查询对应文件夹的模型
 @csrf_exempt
@@ -666,16 +670,26 @@ def view_run(request,view_id):
 
 
 # 获取私有链接
-@csrf_exempt
-def get_private_model(request):
-    if request.method == 'POST':
-        base_url=request.POST.get('url')
-        access_key = 'VfUZy5Gm-aQkbLkpm_lcTraFLW9ac9h1wj-SHbbr'
-        secret_key = 'hBwXWe0BBbkkntfGRUtSEmsA1M9uZqrESiWyIzzk'
-        #构建鉴权对象
-        q = Auth(access_key, secret_key)
-        private_url = q.private_download_url(base_url, expires=360)
-        return HttpResponse(private_url)
+# @csrf_exempt
+# def get_private_model(request):
+#     if request.method == 'POST':
+#         base_url=request.POST.get('url')
+#         access_key = 'VfUZy5Gm-aQkbLkpm_lcTraFLW9ac9h1wj-SHbbr'
+#         secret_key = 'hBwXWe0BBbkkntfGRUtSEmsA1M9uZqrESiWyIzzk'
+#         #构建鉴权对象
+#         q = Auth(access_key, secret_key)
+#         private_url = q.private_download_url(base_url, expires=360)
+#         return HttpResponse(private_url)
+
+# 获取私有链接
+# @csrf_exempt
+def get_private_model(url):
+    access_key = 'VfUZy5Gm-aQkbLkpm_lcTraFLW9ac9h1wj-SHbbr'
+    secret_key = 'hBwXWe0BBbkkntfGRUtSEmsA1M9uZqrESiWyIzzk'
+    #构建鉴权对象
+    q = Auth(access_key, secret_key)
+    private_url = q.private_download_url(url, expires=360)
+    return private_url
 
 
 
